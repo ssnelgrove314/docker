@@ -1,16 +1,17 @@
-FROM debian:sid
+FROM ubuntu:16.04
+
+MAINTAINER vbrazhni <vbrazhni@student.unit.ua>
 
 RUN apt-get update && \
-	apt-get install --no-install-recommends build-essential ca-certificates \
-	git golang-go sqlite libsqlite3-dev openssl openssh-server -y && \
-	mkdir -p /root/go/src/github.com/gogits && \
-	cd /root/go/src/github.com/gogits && \
-	git clone --recurse-submodules -b develop https://github.com/gogits/gogs && \
-	cd gogs && \
-	go build -v -tags 'sqlite'
+    apt-get upgrade -y && \
+    apt-get install -y ca-certificates openssh-server wget postfix
 
-ENV USER="root"
-WORKDIR /root/go/src/github.com/gogits/gogs
-EXPOSE 3000 22
-USER root
-CMD ["./gogs", "web"]
+RUN wget https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh && chmod 777 script.deb.sh && ./script.deb.sh && apt-get install -y gitlab-ce
+
+RUN apt update && apt install -y tzdata && \
+  apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+EXPOSE 443 80 22
+
+ENTRYPOINT (/opt/gitlab/embedded/bin/runsvdir-start &) && gitlab-ctl reconfigure
+
