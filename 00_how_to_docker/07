@@ -1,0 +1,3 @@
+docker port overlord
+#or for more info
+# docker inspect overlord

@@ -1,0 +1,2 @@
+docker inspect spawning-pool
+#docker exec spawning-pool env

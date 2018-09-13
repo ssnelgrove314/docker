@@ -1,0 +1,1 @@
+docker swarm init --adverstise-addr $(docker-machine ip Char)
